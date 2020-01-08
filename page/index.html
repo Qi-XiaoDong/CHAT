@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>聊天机器人</title>
+    <link rel="stylesheet" href="./demo.css">
+    
+</head>
+<body>
+    <div class="wrap">
+        <div class="head">聊天机器人</div>
+        <div class="content">
+        </div>
+        <div class="input">
+            <input id="chatArea" type="text" onkeydown="send(event)">
+            <button onclick="send(event)">发送</button>
+        </div>
+    </div>
+
+    <script>
+
+            var oContent = document.getElementsByClassName("content")[0]
+            function send(event) {
+                if (event instanceof KeyboardEvent && event.key != "Enter") {
+                    return;
+                }
+                var val = document.getElementById("chatArea").value;
+                if (val == null || val == "") {
+                    return;
+                }
+                var me = document.createElement("p");
+                me.classList.add('right');
+                me.innerHTML ='<span>我：</span>' + val;
+                oContent.appendChild(me);
+                var ajax = new XMLHttpRequest();
+                ajax.open("get","http://192.168.3.8:12306/Sendtext?text=" + val);
+                ajax.send();
+                ajax.onreadystatechange = function () {
+                    if (ajax.readyState==4 &&ajax.status==200) {
+                        var temp = document.createElement("p");
+                        temp.classList.add('left');
+                        temp.innerHTML = "<span> 机器人：</span>" + JSON.parse(ajax.responseText).text;
+                        oContent.appendChild(temp);
+                        document.getElementById("chatArea").value = "";
+                    }
+    
+                }
+            }
+        </script>
+</body>
+</html>
